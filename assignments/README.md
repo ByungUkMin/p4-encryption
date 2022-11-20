@@ -16,3 +16,4 @@ Let's get started!
 #### &bull; [Assignment 0: Virtual Networks using Mininet and ONOS](assignment0)
 #### &bull; [Assignment 1: File and Message Transmission using Sockets and 3-Way Handshake](assignment1)
 #### &bull; [Assignment 2: From Bridging to Switching with VLANs](assignment2)
+#### &bull; [Assignment 3: From Bridging to Switching using P4's Match-Action Tables (MATs)](assignment3)
