@@ -124,10 +124,6 @@ control MyIngress(inout headers hdr,
     action flood() {
         standard_metadata.mcast_grp = MCAST_ID;
     }
-
-
-
-
     /**********************************************************************/
     /* Switch Table Logic - Begins ****************************************/
     /**********************************************************************/
@@ -140,22 +136,25 @@ control MyIngress(inout headers hdr,
     // NOTE: please follow p4-src/bridge.p4 for a reference example on how 
     // to create a table.
     
-
-    /**** ADD YOUR CODE HERE ... ****/
-    
+    table switch_table {
+        key = {
+            hdr.ethernet.dstAddr: exact;
+	    meta.vid: exact;
+	    //hdr.vlan.vid: exact;
+        }
+        actions = {
+            flood;
+            forward;
+        }
+        size = 1024;
+        default_action = flood;
+    }
 
     /**********************************************************************/
     /* Switch Table Logic - Ends ****************************************/
     /**********************************************************************/
 
-
-
-    
     apply {
-
-
-
-
         /**********************************************************************/
         /* Ingress Apply Logic - Begins ***************************************/
         /**********************************************************************/
@@ -166,17 +165,24 @@ control MyIngress(inout headers hdr,
         // NOTE: please follow p4-src/bridge.p4 for a reference example on how to
         // apply tables and use if/else blocks.
 
+	if (hdr.ethernet.etherType == ETH_TYPE_VLAN) { // VLAN-enabled
+	    if (meta.etherType == ETH_TYPE_ARP) { // VLAN-enabled + ARP packet
+	        flood();
+	    }
+	    else { // VLAN-enabled + Non-ARP packet
+	        switch_table.apply();
+	    }
+	}
+	else if (hdr.ethernet.etherType == ETH_TYPE_ARP) { // Non-VLAN + ARP packet
+	    flood();
+	}
+	else { // Non-VLAN + Non-ARP packet
+	    switch_table.apply();
+	}
 
-        /**** ADD YOUR CODE HERE ... ****/
-
-        
         /**********************************************************************/
         /* Ingress Apply Logic - Ends *****************************************/
         /**********************************************************************/
-
-
-
-
     }
 }
 
@@ -200,9 +206,6 @@ control MyEgress(inout headers hdr,
         hdr.packet_in.ingress_port = standard_metadata.ingress_port;
     }
 
-
-
-
     /**********************************************************************/
     /* VLAN Table Logic - Begins ****************************************/
     /**********************************************************************/
@@ -214,22 +217,25 @@ control MyEgress(inout headers hdr,
     // NOTE: please follow p4-src/bridge.p4 for a reference example on how 
     // to create a table.
     
-
-    /**** ADD YOUR CODE HERE ... ****/
-
+    table vlan_table {
+        key = {
+	    //hdr.vlan.vid: exact;
+	    meta.vid: exact;
+            standard_metadata.egress_port: exact;
+        }
+        actions = {
+            noop;
+            drop;
+        }
+        size = 1024;
+        default_action = drop;
+    }
 
     /**********************************************************************/
     /* Switch Table Logic - Ends ****************************************/
     /**********************************************************************/
 
-
-
-
     apply {
-
-
-
-
         /**********************************************************************/
         /* Egress Apply Logic - Begins ****************************************/
         /**********************************************************************/
@@ -243,17 +249,23 @@ control MyEgress(inout headers hdr,
         // NOTE: please follow p4-src/bridge.p4 for a reference example on how to
         // apply tables and use if/else blocks.
 
+        // (1) Prune multicast packets going to ingress port to prevent loops
+        if (standard_metadata.egress_port == standard_metadata.ingress_port)
+            drop();
 
-        /**** ADD YOUR CODE HERE ... ****/
 
-        
+        // (2) Send a copy of the packet to the controller for learning
+        if (standard_metadata.egress_port == CPU_PORT)
+            to_controller();
+
+	// (3) Check if the VLAN header exists. If yes, then drop packets ...
+	if (hdr.ethernet.etherType == ETH_TYPE_VLAN) {
+	    vlan_table.apply();
+	}
+
         /**********************************************************************/
         /* Egress Apply Logic - Ends ******************************************/
         /**********************************************************************/
-
-
-
-
     }
 }
 

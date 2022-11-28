@@ -66,7 +66,9 @@ enable-vlan: .mininet-install-prereqs .mininet-enable-vlan
 # Usage: make disable-vlan topo=linear,2,3
 disable-vlan: .mininet-disable-vlan
 
-# Usage: make controller name=bridge grpc_port=50001 topo=linear,2,3
+# Byounguk:
+# Usage: (With AES) make controller name=switch-AES  grpc_port=50001 topo=linear,2,3
+# Usage: (Without AES) make controller name=switch-woAES grpc_port=50001 topo=linear,2,3
 controller:
 	make .controller-$(name)
 
@@ -103,8 +105,15 @@ clean: .p4rt-clean .p4-clean
 	P4RT_PROGRAM_NAME=switch \
 	make .p4rt-sh
 
-.controller-switch:
-	P4_PROGRAM_NAME=switch \
+# Byounguk: Switch without AES
+.controller-switch-woAES:
+	P4_PROGRAM_NAME=switch-woAES \
+	P4RT_PROGRAM_NAME=switch \
+	make .p4rt-script
+
+# Byounguk: Switch with AES
+.controller-switch-AES:
+	P4_PROGRAM_NAME=switch-v1model \
 	P4RT_PROGRAM_NAME=switch \
 	make .p4rt-script
 
