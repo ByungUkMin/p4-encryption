@@ -128,7 +128,7 @@ def ProcPacketIn(switch_name, logs_dir, num_logs_threshold):
                             isARPCheck_in_bytes = payload[16:18]
                             isARPCheck = int.from_bytes(isARPCheck_in_bytes, "big")
                             if isARPCheck == ETH_TYPE_ARP: # VLAN-enabled + ARP packet
-                                table_entry = p4sh.TableEntry('SwitchAESIngress.switch_table')(action='SwitchAESIngress.forward')
+                                table_entry = p4sh.TableEntry('MyIngress.switch_table')(action='MyIngress.forward')
                                 table_entry.match['hdr.ethernet.dstAddr'] = src_mac
                                 table_entry.match['meta.vid'] = str(vlan_id)
                                 table_entry.action['port'] = str(ingress_port)
@@ -136,7 +136,7 @@ def ProcPacketIn(switch_name, logs_dir, num_logs_threshold):
 
                         #elif eth_type == ETH_TYPE_ARP:  # Non-VLAN + ARP packet
                         else:  # Non-VLAN + ARP packet
-                            table_entry = p4sh.TableEntry('SwitchAESIngress.switch_table')(action='SwitchAESIngress.forward')
+                            table_entry = p4sh.TableEntry('MyIngress.switch_table')(action='MyIngress.forward')
                             table_entry.match['hdr.ethernet.dstAddr'] = src_mac
                             table_entry.match['meta.vid'] = str(0)
                             table_entry.action['port'] = str(ingress_port)
@@ -155,7 +155,7 @@ def ProcPacketIn(switch_name, logs_dir, num_logs_threshold):
                 num_logs = 0
                 with open('{0}/{1}-table.json'.format(logs_dir, switch_name), 'w') as outfile:
                     with contextlib.redirect_stdout(outfile):
-                        p4sh.TableEntry('SwitchAESIngress.switch_table').read(lambda te: print(te))
+                        p4sh.TableEntry('MyIngress.switch_table').read(lambda te: print(te))
                 print(
                     "INFO: Log committed to {0}/{1}-table.json".format(logs_dir, switch_name))
     except KeyboardInterrupt:
@@ -202,8 +202,8 @@ def add_everything(mykey):
     
     for rndNum in range(1,10-1,2):
         curr_round=rndNum-1
-        #table_add(table_name='SwitchAESIngress.tb_recirc_decision', match_key_names_list=['hdr.aes_meta.curr_round'], match_key_values_list=[curr_round], action_name='incr_and_recirc', action_data_names_list=['next_round'], action_data_values_list=[curr_round+2])
-        table_entry = p4sh.TableEntry('SwitchAESIngress.tb_recirc_decision')(action='SwitchAESIngress.incr_and_recirc')
+        #table_add(table_name='MyIngress.tb_recirc_decision', match_key_names_list=['hdr.aes_meta.curr_round'], match_key_values_list=[curr_round], action_name='incr_and_recirc', action_data_names_list=['next_round'], action_data_values_list=[curr_round+2])
+        table_entry = p4sh.TableEntry('MyIngress.tb_recirc_decision')(action='MyIngress.incr_and_recirc')
         table_entry.match['hdr.aes_meta.curr_round'] = curr_round
         table_entry.action['next_round'] = str(curr_round + 2)
         table_entry.insert()
@@ -212,10 +212,10 @@ def add_everything(mykey):
     fields_list=['s%d%d' %(i,j) for i in range(4) for j in range(4)]
     values_list=[FinalXORvect[i][j] for i in range(4) for j in range(4)]
 
-    #table_add(table_name='SwitchAESIngress.tb_recirc_decision', match_key_names_list=['hdr.aes_meta.curr_round'], match_key_values_list=[last_round], action_name='do_not_recirc_final_xor',     action_data_names_list=fields_list, action_data_values_list=values_list)
+    #table_add(table_name='MyIngress.tb_recirc_decision', match_key_names_list=['hdr.aes_meta.curr_round'], match_key_values_list=[last_round], action_name='do_not_recirc_final_xor',     action_data_names_list=fields_list, action_data_values_list=values_list)
 
     for fields, values in zip(fields_list, values_list):
-        table_entry = p4sh.TableEntry('SwitchAESIngress.tb_recirc_decision')(action='SwitchAESIngress.do_not_recirc_final_xor')
+        table_entry = p4sh.TableEntry('MyIngress.tb_recirc_decision')(action='MyIngress.do_not_recirc_final_xor')
         table_entry.match['hdr.aes_meta.curr_round'] = last_round
         table_entry.action[fields] = str(values)
         table_entry.insert()
@@ -230,7 +230,7 @@ def add_everything(mykey):
         
         def printRules1(lutR,lutC,  inputR, inputC):
             r,c=inputR, inputC
-            tname="SwitchAESIngress.tb_lookup_%d_%d_t"%(r,c)
+            tname="MyIngress.tb_lookup_%d_%d_t"%(r,c)
             aname="write_v_%d_%d_a"%(r,c)
             kname="hdr.aes.s%d%d"%(r,c)
 
@@ -245,7 +245,7 @@ def add_everything(mykey):
                 
         def printRules2(lutR,lutC,  inputR, inputC):
             r,c=inputR, inputC
-            tname="SwitchAESIngress.tb_lookup_%d_%d_t2r"%(r,c)
+            tname="MyIngress.tb_lookup_%d_%d_t2r"%(r,c)
             aname="write_v_%d_%d_a"%(r,c)
             kname="hdr.aes.s%d%d"%(r,c)
 
@@ -310,6 +310,7 @@ def add_encryption(mykey):
         raise
     finally:
         controller_stub.close()
+
 
 ###############################################################################
 # Main 

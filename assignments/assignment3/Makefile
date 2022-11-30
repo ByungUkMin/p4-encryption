@@ -115,7 +115,7 @@ clean: .p4rt-clean .p4-clean
 # Byounguk: Switch with AES
 .controller-switch-AES:
 	ENC=2 \
-	P4_PROGRAM_NAME=switch-v1model \
+	P4_PROGRAM_NAME=switch-AES \
 	P4RT_PROGRAM_NAME=switch \
 	make .p4rt-script
 

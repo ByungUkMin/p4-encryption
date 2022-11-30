@@ -148,7 +148,7 @@ control MyIngress(
     }
 
     action _drop() {
-        mark_to_drop();
+        mark_to_drop(standard_metadata);
     }
 
 	// ===== Start of AES logic =====
@@ -180,7 +180,7 @@ control MyIngress(
 		default_action = mask_key(SUBKEY128); \
 	}
 // For demonstration purpose, here we put in all the 10-round subkeys derived from an example key 0x01010101020202020303030304040404
-	TABLE_MASK_KEY( 0,0x01010101020202020303030304040404)
+	//TABLE_MASK_KEY( 0,0x01010101020202020303030304040404)
 	TABLE_MASK_KEY( 1,0xf2f3f3f3f0f1f1f1f3f2f2f2f7f6f6f6)
 	TABLE_MASK_KEY( 2,0xb2b1b19b4240406ab1b2b2984644446e)
 	//TABLE_MASK_KEY( 3,0xadaa2ec1efea6eab5e58dc33181c985d)
@@ -190,7 +190,7 @@ control MyIngress(
 	//TABLE_MASK_KEY( 7,0xdc98206b2f01ede562fef3979543b48)
 	//TABLE_MASK_KEY( 8,0xad2bd0b01fdbce6e49f4215730a01a1f)
 	//TABLE_MASK_KEY( 9,0x568910b44952deda00a6ff8d3006e592)
-	TABLE_MASK_KEY(10,0xf505fb04602816a46a47ee776a29b75)
+	//TABLE_MASK_KEY(10,0xf505fb04602816a46a47ee776a29b75)
 
 #define APPLY_MASK_KEY(ROUND) mask_key_round_##ROUND##.apply();
 
@@ -272,25 +272,25 @@ GENERATE_ALL_TABLE_LUT(2)
 //GENERATE_ALL_TABLE_LUT(9)
 //Only round 1-9 requires mixcolumns. round 10 is different:
 // LAST round is special, use SBOX directly as LUT
-	TABLE_LUT(aes_sbox_lut_00_rLAST, meta.aes.r0[31:24], GEN_LUT_SBOX, merge_to_t0_slice0)
-	TABLE_LUT(aes_sbox_lut_01_rLAST, meta.aes.r1[23:16], GEN_LUT_SBOX, merge_to_t0_slice1)
-	TABLE_LUT(aes_sbox_lut_02_rLAST, meta.aes.r2[15: 8], GEN_LUT_SBOX, merge_to_t0_slice2)
-	TABLE_LUT(aes_sbox_lut_03_rLAST, meta.aes.r3[7 : 0], GEN_LUT_SBOX, merge_to_t0_slice3)
+	//TABLE_LUT(aes_sbox_lut_00_rLAST, meta.aes.r0[31:24], GEN_LUT_SBOX, merge_to_t0_slice0)
+	//TABLE_LUT(aes_sbox_lut_01_rLAST, meta.aes.r1[23:16], GEN_LUT_SBOX, merge_to_t0_slice1)
+	//TABLE_LUT(aes_sbox_lut_02_rLAST, meta.aes.r2[15: 8], GEN_LUT_SBOX, merge_to_t0_slice2)
+	//TABLE_LUT(aes_sbox_lut_03_rLAST, meta.aes.r3[7 : 0], GEN_LUT_SBOX, merge_to_t0_slice3)
 
-	TABLE_LUT(aes_sbox_lut_10_rLAST, meta.aes.r1[31:24], GEN_LUT_SBOX, merge_to_t1_slice0)
-	TABLE_LUT(aes_sbox_lut_11_rLAST, meta.aes.r2[23:16], GEN_LUT_SBOX, merge_to_t1_slice1)
-	TABLE_LUT(aes_sbox_lut_12_rLAST, meta.aes.r3[15: 8], GEN_LUT_SBOX, merge_to_t1_slice2)
-	TABLE_LUT(aes_sbox_lut_13_rLAST, meta.aes.r0[7 : 0], GEN_LUT_SBOX, merge_to_t1_slice3)
+	//TABLE_LUT(aes_sbox_lut_10_rLAST, meta.aes.r1[31:24], GEN_LUT_SBOX, merge_to_t1_slice0)
+	//TABLE_LUT(aes_sbox_lut_11_rLAST, meta.aes.r2[23:16], GEN_LUT_SBOX, merge_to_t1_slice1)
+	//TABLE_LUT(aes_sbox_lut_12_rLAST, meta.aes.r3[15: 8], GEN_LUT_SBOX, merge_to_t1_slice2)
+	//TABLE_LUT(aes_sbox_lut_13_rLAST, meta.aes.r0[7 : 0], GEN_LUT_SBOX, merge_to_t1_slice3)
 
-	TABLE_LUT(aes_sbox_lut_20_rLAST, meta.aes.r2[31:24], GEN_LUT_SBOX, merge_to_t2_slice0)
-	TABLE_LUT(aes_sbox_lut_21_rLAST, meta.aes.r3[23:16], GEN_LUT_SBOX, merge_to_t2_slice1)
-	TABLE_LUT(aes_sbox_lut_22_rLAST, meta.aes.r0[15: 8], GEN_LUT_SBOX, merge_to_t2_slice2)
-	TABLE_LUT(aes_sbox_lut_23_rLAST, meta.aes.r1[7 : 0], GEN_LUT_SBOX, merge_to_t2_slice3)
+	//TABLE_LUT(aes_sbox_lut_20_rLAST, meta.aes.r2[31:24], GEN_LUT_SBOX, merge_to_t2_slice0)
+	//TABLE_LUT(aes_sbox_lut_21_rLAST, meta.aes.r3[23:16], GEN_LUT_SBOX, merge_to_t2_slice1)
+	//TABLE_LUT(aes_sbox_lut_22_rLAST, meta.aes.r0[15: 8], GEN_LUT_SBOX, merge_to_t2_slice2)
+	//TABLE_LUT(aes_sbox_lut_23_rLAST, meta.aes.r1[7 : 0], GEN_LUT_SBOX, merge_to_t2_slice3)
 
-	TABLE_LUT(aes_sbox_lut_30_rLAST, meta.aes.r3[31:24], GEN_LUT_SBOX, merge_to_t3_slice0)
-	TABLE_LUT(aes_sbox_lut_31_rLAST, meta.aes.r0[23:16], GEN_LUT_SBOX, merge_to_t3_slice1)
-	TABLE_LUT(aes_sbox_lut_32_rLAST, meta.aes.r1[15: 8], GEN_LUT_SBOX, merge_to_t3_slice2)
-	TABLE_LUT(aes_sbox_lut_33_rLAST, meta.aes.r2[7 : 0], GEN_LUT_SBOX, merge_to_t3_slice3)
+	//TABLE_LUT(aes_sbox_lut_30_rLAST, meta.aes.r3[31:24], GEN_LUT_SBOX, merge_to_t3_slice0)
+	//TABLE_LUT(aes_sbox_lut_31_rLAST, meta.aes.r0[23:16], GEN_LUT_SBOX, merge_to_t3_slice1)
+	//TABLE_LUT(aes_sbox_lut_32_rLAST, meta.aes.r1[15: 8], GEN_LUT_SBOX, merge_to_t3_slice2)
+	//TABLE_LUT(aes_sbox_lut_33_rLAST, meta.aes.r2[7 : 0], GEN_LUT_SBOX, merge_to_t3_slice3)
 
 #define AP(ROUND,i)  aes_sbox_lut_##i##_r##ROUND##.apply();
 #define APPLY_ALL_TABLE_LUT(ROUND) AP(ROUND,00) AP(ROUND,01) AP(ROUND,02) AP(ROUND,03) AP(ROUND,10) AP(ROUND,11) AP(ROUND,12) AP(ROUND,13) AP(ROUND,20) AP(ROUND,21) AP(ROUND,22) AP(ROUND,23) AP(ROUND,30) AP(ROUND,31) AP(ROUND,32) AP(ROUND,33)
@@ -330,7 +330,7 @@ GENERATE_ALL_TABLE_LUT(2)
             if (hdr.aes_inout.isValid() && hdr.aes_inout.ff==0xFF) {
 	        read_cleartext();
 	        // Start AES
-	        APPLY_MASK_KEY(0);
+	        //APPLY_MASK_KEY(0);
 	        // 10-1 Rounds
 	        new_round(); APPLY_ALL_TABLE_LUT(1); APPLY_MASK_KEY(1);
 	        new_round(); APPLY_ALL_TABLE_LUT(2); APPLY_MASK_KEY(2);
@@ -342,7 +342,7 @@ GENERATE_ALL_TABLE_LUT(2)
 	        //new_round(); APPLY_ALL_TABLE_LUT(8); APPLY_MASK_KEY(8);
 	        //new_round(); APPLY_ALL_TABLE_LUT(9); APPLY_MASK_KEY(9);
 	        // one last round, S-box only
-	        new_round(); APPLY_ALL_TABLE_LUT(LAST); APPLY_MASK_KEY(10);
+	        //new_round(); APPLY_ALL_TABLE_LUT(LAST); APPLY_MASK_KEY(10);
 	        // End AES
 
 	        write_ciphertext();
