@@ -320,12 +320,15 @@ if __name__ == '__main__':
                         type=str, action="store", default='50001')
     parser.add_argument('--topo-config', help='Topology Configuration File', required=True,
                         type=str, action="store")
-    parser.add_argument('--enc-key', help='AES encryption key', required=True,
-                        type=str, action="store")
+    parser.add_argument('--encrypted', help='AES encryption key', required=True,
+                        type=int, action="store")
     args = parser.parse_args()
 
     # Create a bridge name postfixed with the grpc port number
-    switch_name = 'switch-{0}'.format(args.grpc_port)
+    if args.encrypted == 1: # wo AES
+        switch_name = 'switch-woAES-{0}'.format(args.grpc_port)
+    elif args.encrypted == 2: # AES
+        switch_name = 'switch-AES-{0}'.format(args.grpc_port)
 
     # Get Multicast/VLAN ID to ports mapping
     with open(args.topo_config, 'r') as infile:
@@ -395,12 +398,12 @@ if __name__ == '__main__':
         ##################################################################################
         # Encryption starts  ######################################################
         ##################################################################################
-    if args.enc_key == None:
-        sys.stderr.write("Install AES-128 key into Scrambled Lookup Tables in the P4 data plane program.")
-        sys.stderr.write("Example: python switch-AES.py --topo-config=topo/$(topo).json --grpc-port=50001 --enc-key 0x10002000300040005000600070008000 \n")
-        sys.exit(-1)
+    #if args.enc_key == None:
+    #    sys.stderr.write("Install AES-128 key into Scrambled Lookup Tables in the P4 data plane program.")
+    #    sys.stderr.write("Example: python switch-AES.py --topo-config=topo/$(topo).json --grpc-port=50001 --enc-key 0x10002000300040005000600070008000 \n")
+    #    sys.exit(-1)
 
-    add_encryption(args.enc_key)
+    #add_encryption(args.enc_key)
 
         ##################################################################################
         # Encryption ends  ######################################################

@@ -107,12 +107,14 @@ clean: .p4rt-clean .p4-clean
 
 # Byounguk: Switch without AES
 .controller-switch-woAES:
+	ENC=1 \
 	P4_PROGRAM_NAME=switch-woAES \
 	P4RT_PROGRAM_NAME=switch \
 	make .p4rt-script
 
 # Byounguk: Switch with AES
 .controller-switch-AES:
+	ENC=2 \
 	P4_PROGRAM_NAME=switch-v1model \
 	P4RT_PROGRAM_NAME=switch \
 	make .p4rt-script
@@ -137,7 +139,7 @@ clean: .p4rt-clean .p4-clean
 	mkdir -p logs/$(P4_PROGRAM_DIRNAME)
 	P4RUNTIME_SH_DOCKER_NAME=p4runtime-sh-$(grpc_port) \
 	$(SCRIPTS)/p4runtime-sh.run-script \
-		"p4rt-src/$(P4RT_PROGRAM_DIRNAME)/$(P4RT_PROGRAM_NAME).py --grpc-port=$(grpc_port) --topo-config=topo/$(topo).json"
+		"p4rt-src/$(P4RT_PROGRAM_DIRNAME)/$(P4RT_PROGRAM_NAME).py --grpc-port=$(grpc_port) --encrypted=$(ENC) --topo-config=topo/$(topo).json"
 
 .p4rt-logs:
 	cat logs/$(P4_PROGRAM_DIRNAME)/$(P4_PROGRAM_NAME)-$(grpc_port)-table.json
