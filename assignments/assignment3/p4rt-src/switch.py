@@ -100,11 +100,9 @@ def ProcPacketIn(switch_name, logs_dir, num_logs_threshold):
                     vlan_id_in_bytes = payload[14:16]
                     vlan_id = int.from_bytes(vlan_id_in_bytes, "big")
 
-                    print("PacketIn: dst={0} src={1} vlan={2} port={3}".format(
-                        dst_mac, src_mac, vlan_id, ingress_port))
+                    print("PacketIn: dst={0} src={1} vlan={2} port={3}".format(dst_mac, src_mac, vlan_id, ingress_port))
                 else:
-                    print("PacketIn: dst={0} src={1} port={2}".format(
-                        dst_mac, src_mac, ingress_port))
+                    print("PacketIn: dst={0} src={1} port={2}".format(dst_mac, src_mac, ingress_port))
 
                 try:
                     with contextlib.redirect_stdout(None):  # A hack to suppress print statements 

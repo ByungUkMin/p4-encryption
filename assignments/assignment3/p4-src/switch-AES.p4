@@ -66,17 +66,17 @@ header vlan_t {
 // To perform multiple block using modes like CBC/CTR, etc., simply XOR a counter/IV with value before starting AES.
 header aes_inout_t {
     bit<128> value;
-    bit<8> ff; // should be 0xFF.
+    //bit<8> ff; // should be 0xFF.
 }
-header copyright_t {
-	bit<64> value;
-}
+//header copyright_t {
+//	bit<64> value;
+//}
 
 typedef bit<9> egressSpec_t;
 struct my_headers_t {
     ethernet_t ethernet;
     aes_inout_t aes_inout;
-    copyright_t copy;
+    //copyright_t copy;
 
     // from assignment3
     vlan_t vlan;
@@ -116,9 +116,16 @@ parser MyParser(packet_in packet,
         meta.vid = 0; //From assignment3
         meta.etherType = hdr.ethernet.etherType;
         transition select(hdr.ethernet.etherType) {
-            ETHERTYPE_AES_TOY : parse_aes;
-            default      : accept;
+            ETH_TYPE_VLAN: parse_vlan;
+            default: parse_aes;
         }
+    }
+
+    state parse_vlan {
+        packet.extract(hdr.vlan);
+        meta.vid = hdr.vlan.vid;
+        meta.etherType = hdr.vlan.etherType;
+        transition parse_aes;
     }
 
     state parse_aes {
@@ -180,7 +187,7 @@ control MyIngress(
 		default_action = mask_key(SUBKEY128); \
 	}
 // For demonstration purpose, here we put in all the 10-round subkeys derived from an example key 0x01010101020202020303030304040404
-	//TABLE_MASK_KEY( 0,0x01010101020202020303030304040404)
+	TABLE_MASK_KEY( 0,0x01010101020202020303030304040404)
 	TABLE_MASK_KEY( 1,0xf2f3f3f3f0f1f1f1f3f2f2f2f7f6f6f6)
 	TABLE_MASK_KEY( 2,0xb2b1b19b4240406ab1b2b2984644446e)
 	//TABLE_MASK_KEY( 3,0xadaa2ec1efea6eab5e58dc33181c985d)
@@ -327,10 +334,11 @@ GENERATE_ALL_TABLE_LUT(2)
 	    flood();
 	}
 	else { // Non-VLAN + Non-ARP packet
-            if (hdr.aes_inout.isValid() && hdr.aes_inout.ff==0xFF) {
+            //if (hdr.aes_inout.isValid() && hdr.aes_inout.ff==0xFF) {
+            if (hdr.aes_inout.isValid()) {
 	        read_cleartext();
 	        // Start AES
-	        //APPLY_MASK_KEY(0);
+	        APPLY_MASK_KEY(0);
 	        // 10-1 Rounds
 	        new_round(); APPLY_ALL_TABLE_LUT(1); APPLY_MASK_KEY(1);
 	        new_round(); APPLY_ALL_TABLE_LUT(2); APPLY_MASK_KEY(2);
