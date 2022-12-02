@@ -68,15 +68,15 @@ header aes_inout_t {
     bit<128> value;
     //bit<8> ff; // should be 0xFF.
 }
-//header copyright_t {
-//	bit<64> value;
-//}
+header copyright_t {
+	bit<64> value;
+}
 
 typedef bit<9> egressSpec_t;
 struct my_headers_t {
     ethernet_t ethernet;
     aes_inout_t aes_inout;
-    //copyright_t copy;
+    copyright_t copy;
 
     // from assignment3
     vlan_t vlan;
@@ -150,8 +150,8 @@ control MyIngress(
         tmp = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = hdr.ethernet.srcAddr;
         hdr.ethernet.srcAddr = tmp;
-		hdr.copy.setValid();
-		hdr.copy.value=COPYRIGHT_STRING;
+	hdr.copy.setValid();
+	hdr.copy.value=COPYRIGHT_STRING;
     }
 
     action _drop() {
