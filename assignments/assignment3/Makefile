@@ -60,6 +60,24 @@ mininet:
 	$(SCRIPTS)/mn-stratum --topo $(topo)
 	make clean
 
+mininet-prereqs:
+	docker exec -it mn-stratum bash -c \
+		"apt-get update ; \
+		 apt-get -y --allow-unauthenticated install iptables python-scapy"
+
+	$(SCRIPTS)/utils/mn-stratum/exec-script h1s1 \
+		"iptables -A OUTPUT -p tcp --tcp-flags RST RST -j DROP"
+	$(SCRIPTS)/utils/mn-stratum/exec-script h1s2 \
+		"iptables -A OUTPUT -p tcp --tcp-flags RST RST -j DROP"
+	$(SCRIPTS)/utils/mn-stratum/exec-script h2s1 \
+		"iptables -A OUTPUT -p tcp --tcp-flags RST RST -j DROP"
+	$(SCRIPTS)/utils/mn-stratum/exec-script h2s2 \
+		"iptables -A OUTPUT -p tcp --tcp-flags RST RST -j DROP"
+	$(SCRIPTS)/utils/mn-stratum/exec-script h3s1 \
+		"iptables -A OUTPUT -p tcp --tcp-flags RST RST -j DROP"
+	$(SCRIPTS)/utils/mn-stratum/exec-script h3s2 \
+		"iptables -A OUTPUT -p tcp --tcp-flags RST RST -j DROP"
+		
 # Usage: make enable-vlan topo=linear,2,3
 enable-vlan: .mininet-install-prereqs .mininet-enable-vlan
 
