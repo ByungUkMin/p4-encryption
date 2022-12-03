@@ -116,6 +116,7 @@ parser MyParser(packet_in packet,
         meta.vid = 0; //From assignment3
         meta.etherType = hdr.ethernet.etherType;
         transition select(hdr.ethernet.etherType) {
+            //ETHERTYPE_AES_TOY : parse_aes;
             ETH_TYPE_VLAN: parse_vlan;
             default: parse_aes;
         }
@@ -357,10 +358,11 @@ GENERATE_ALL_TABLE_LUT(2)
 	        // Send the packet back to the sender (for debug only).
 
 	        //reflect();
-	    	switch_table.apply();
-            } else {
-                _drop();
-            }
+            } 
+	    //else {
+            //    _drop();
+            //}
+	    switch_table.apply();
 	}
     }
 }
