@@ -31,7 +31,8 @@ endif
 
 SCRIPTS = ../scripts
 SRCS_DIR=.
-SPC = $(SRCS_DIR)/client.py
+SPC_SEND = $(SRCS_DIR)/client.py
+SPC_RECEIVE = $(SRCS_DIR)/receiver.py
 
 export MN_STRATUM_IMG = opennetworking/mn-stratum
 export P4RUNTIME_SH_IMG = p4lang/p4runtime-sh:latest
@@ -87,10 +88,15 @@ controller-logs:
 host:
 	$(SCRIPTS)/utils/mn-stratum/exec $(name)
 
-# Usage: make host name=h1s1 dst_ip=10.0.0.1 port=1111
-host-script:
+# Usage: make sender-script name=h1s1 dst_ip=10.0.0.1 port=1111
+sender-script:
 	$(SCRIPTS)/utils/mn-stratum/exec-script $(name) \
-		"$(SPC) $(dst_ip) $(port)"
+		"$(SPC_SEND) $(dst_ip) $(port)"
+
+# Usage: make receiver-script name=h2s2
+receiver-script:
+	$(SCRIPTS)/utils/mn-stratum/exec-script $(name) \
+		"$(SPC_RECEIVE)"
 
 clean: .p4rt-clean .p4-clean
 
