@@ -24,7 +24,10 @@ def handle_packet(pkt):
           to the server with correct `sequence` and `acknowledgement` numbers.
     """
 
+    #print(str(pkt['Raw']))
     print(str(pkt['Raw']))
+    print("hex str - ", pkt['Raw'])
+    #print " ".join(hex(ord(n)) for n in my_hex
     
     global count_packets
     count_packets = count_packets + 1

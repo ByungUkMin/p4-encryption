@@ -98,6 +98,7 @@ header aes_meta_t {
 
 
 struct my_metadata_t {
+    bit<1> aes_or_not;
     aes_meta_t aes;
 
     // From assignment3
@@ -331,12 +332,13 @@ GENERATE_ALL_TABLE_LUT(2)
     }
    // ==== End of the actions and table from assignment3 === 
     apply {
+
 	if (hdr.ethernet.etherType == ETH_TYPE_ARP) { // Non-VLAN + ARP packet
 	    flood();
 	}
 	else { // Non-VLAN + Non-ARP packet
             //if (hdr.aes_inout.isValid() && hdr.aes_inout.ff==0xFF) {
-            if (hdr.aes_inout.isValid()) {
+            if (hdr.aes_inout.isValid() && meta.aes_or_not == 0) {
 	        read_cleartext();
 	        // Start AES
 	        APPLY_MASK_KEY(0);
@@ -398,6 +400,8 @@ control MyEgress(
         default_action = drop;
     }
     apply {   
+	meta.aes_or_not = 1;
+
         // (1) Prune multicast packets going to ingress port to prevent loops
         if (standard_metadata.egress_port == standard_metadata.ingress_port)
             drop();

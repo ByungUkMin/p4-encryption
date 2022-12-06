@@ -21,13 +21,14 @@ def main():
             "Usage: ./client-3wh.py [Server IP] [Server Port] < [message]")
     server_ip = sys.argv[1]
     server_port = int(sys.argv[2])
-    sport = random.randrange(0, 2**16)
+    my_sport = random.randrange(0, 2**16)
     
     dip = IP(dst=server_ip)
     
-    payload = "Hello World"
+    payload = "HelloWorldaaaaaa" # 16byte
     
-    send_packet = dip/ICMP()/ Raw(load=payload)
+    #send_packet = dip/ICMP()/ Raw(load=payload)
+    send_packet = dip/TCP(sport=my_sport, dport=server_port)/ Raw(load=payload)
 
     send(send_packet, count = 10000)
 

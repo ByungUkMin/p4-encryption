@@ -1,7 +1,11 @@
 #!/bin/bash
 
 MN_STRATUM_DOCKER_NAME=${MN_STRATUM_DOCKER_NAME:-mn-stratum}
-MN_STRATUM_IMG=${MN_STRATUM_IMG:-opennetworking/mn-stratum:20.12}
+
+#MN_STRATUM_IMG=${MN_STRATUM_IMG:-opennetworking/mn-stratum:20.12}
+
+# For debugging the switch with "trace"
+MN_STRATUM_IMG=sahoo9/mn-custom:latest
 MN_STRATUM_MOUNT_DIR=${MN_STRATUM_MOUNT_DIR:-$PWD}
 
 docker run --privileged --rm -it \

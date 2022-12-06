@@ -97,8 +97,9 @@ def ProcPacketIn(switch_name, logs_dir, num_logs_threshold):
 
                 if eth_type == ETH_TYPE_VLAN:
                     # Parse VLAN header
-                    vlan_id_in_bytes = payload[14:16]
-                    vlan_id = int.from_bytes(vlan_id_in_bytes, "big")
+                    #vlan_id_in_bytes = payload[14:16]
+                    #vlan_id = int.from_bytes(vlan_id_in_bytes, "big")
+                    vlan_id = int(int.from_bytes(payload[14:16], "big") & 0x0FFF)
 
                     print("PacketIn: dst={0} src={1} vlan={2} port={3}".format(dst_mac, src_mac, vlan_id, ingress_port))
                 else:
@@ -132,8 +133,8 @@ def ProcPacketIn(switch_name, logs_dir, num_logs_threshold):
                                 table_entry.action['port'] = str(ingress_port)
                                 table_entry.insert()
 
-                        #elif eth_type == ETH_TYPE_ARP:  # Non-VLAN + ARP packet
-                        else:  # Non-VLAN + ARP packet
+                        elif eth_type == ETH_TYPE_ARP:  # Non-VLAN + ARP packet
+                        #else:  # Non-VLAN + ARP packet
                             table_entry = p4sh.TableEntry('MyIngress.switch_table')(action='MyIngress.forward')
                             table_entry.match['hdr.ethernet.dstAddr'] = src_mac
                             table_entry.match['meta.vid'] = str(0)
