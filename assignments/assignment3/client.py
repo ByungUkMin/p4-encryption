@@ -25,12 +25,19 @@ def main():
     
     dip = IP(dst=server_ip)
     
-    payload = "HelloWorldaaaaaa" # 16byte
+    payload = "Hello12345678901" # 16byte
     
+    payload = "0"*(128-len(payload))+ payload
     #send_packet = dip/ICMP()/ Raw(load=payload)
     send_packet = dip/TCP(sport=my_sport, dport=server_port)/ Raw(load=payload)
+    
+    print(send_packet.show())
+    print("packet length: " , len(send_packet))
+    print("IP header length: " , len(send_packet[IP]))
+    print("TCP header length length: " , len(send_packet['TCP']))
+    print("Raw length: " , len(send_packet['Raw']))
 
-    send(send_packet, count = 10000)
+    send(send_packet, count = 10)
 
 
 if __name__ == "__main__":
