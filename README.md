@@ -19,6 +19,10 @@ While a successful AES implementation in the data plane would be helpful for a n
 
 The key insight of "Implementing AES Encryption on Programmable Switches via Scrambled Lookup Tables", then, was the utilization of Scrambled Lookup Tables to take advantage of table-matching to reduce the number of arithmetic operations required for encruption.
 
+
+https://user-images.githubusercontent.com/54554850/206609500-cfd5bb17-efe5-4ebe-b85b-af96a8ff368b.mp4
+(swap out for extended video later?)
+
 ## Our Implementation and Results
 
 Our implementation was run on an AWS EC2 instance with 2vCPU and 8 gb of of memory, and utilizes a 2 switch, 6 host Mininet topology heavily drawing upon the assignment 3 code repository with custom Scapy scripts for packet generation and for collecting metrics such as packect rate to measure encryption overhead.
