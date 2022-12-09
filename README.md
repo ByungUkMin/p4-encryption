@@ -2,8 +2,7 @@
 
 <img src="purdue-cs-logo.jpg" alt="drawing" width="450"/>
 
-# Validating and Evaluating the Paper, "Implementing AES
-Encryption on Programmable Switches via Scrambled Lookup
+# Validating and Evaluating the Paper, "Implementing AES Encryption on Programmable Switches via Scrambled Lookup
 
 **Members:** Franklin Liu, Tom Yarrow, Rui Zhu, Siyu Yao, Byounguk Min, Winston Wang
 
