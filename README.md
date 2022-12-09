@@ -1,8 +1,11 @@
 
-## assignments
-Directories from our network course. This is to set the simulated environment for our project.
 
-Members: Franklin Liu, Tom Yarrow, Rui Zhu, Siyu Yao, Byounguk Min, Winston Wang
+<img src="images/purdue-cs-logo.jpg" alt="drawing" width="450"/>
+
+# Validating and Evaluating the Paper, "Implementing AES
+Encryption on Programmable Switches via Scrambled Lookup
+
+**Members:** Franklin Liu, Tom Yarrow, Rui Zhu, Siyu Yao, Byounguk Min, Winston Wang
 
 ## Project Statement
 
