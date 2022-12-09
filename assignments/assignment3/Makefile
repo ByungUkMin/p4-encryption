@@ -88,15 +88,15 @@ controller-logs:
 host:
 	$(SCRIPTS)/utils/mn-stratum/exec $(name)
 
-# Usage: make sender-script name=h1s1 dst_ip=10.0.0.1 port=1111
+# Usage: make sender-script name=h1s1 dst_ip=10.0.0.4 port=1111
 sender-script:
 	$(SCRIPTS)/utils/mn-stratum/exec-script $(name) \
 		"$(SPC_SEND) $(dst_ip) $(port)"
 
-# Usage: make receiver-script name=h2s2
+# Usage: make receiver-script name=h2s2 dst_ip=10.0.0.1 port=2222
 receiver-script:
 	$(SCRIPTS)/utils/mn-stratum/exec-script $(name) \
-		"$(SPC_RECEIVE)"
+		"$(SPC_RECEIVE) $(dst_ip) $(port)"
 
 clean: .p4rt-clean .p4-clean
 

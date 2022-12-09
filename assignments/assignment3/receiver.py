@@ -45,7 +45,7 @@ def main():
     connected = True
     while connected:
         capture=sniff(prn=lambda x: handle_packet(x),lfilter=lambda x: _filter(x),count=1)
-        if count_packets >=50:
+        if count_packets >=10:
             connected = False
 
 

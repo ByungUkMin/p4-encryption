@@ -43,6 +43,36 @@ header packet_in_header_t {
 }
 
 // We define a special header type to pass in the cleartext & outut ciphertext
+header ipv4_t {
+    bit<4> version;
+    bit<4> ihl;
+    bit<6> dscp;
+    bit<2> ecn;
+    bit<16> len;
+    bit<16> identification;
+    bit<3> flags;
+    bit<13> frag_offset;
+    bit<8> ttl;
+    bit<8> protocol;
+    bit<16> hdr_checksum;
+    bit<32> src_addr;
+    bit<32> dst_addr;
+}
+
+header tcp_t {
+    bit<16> src_port;
+    bit<16> dst_port;
+    bit<32> seq_no;
+    bit<32> ack_no;
+    bit<4>  data_offset;
+    bit<3>  res;
+    bit<3>  ecn;
+    bit<6>  ctrl;
+    bit<16> window;
+    bit<16> checksum;
+    bit<16> urgent_ptr;
+}
+
 header ethernet_t {
     bit<48> dstAddr;
     bit<48> srcAddr;
@@ -56,6 +86,12 @@ header vlan_t {
     bit<16> etherType;
 }
 
+typedef bit<16>  l4_port_t;
+const bit<8> PROTO_ICMP = 1;
+const bit<8> PROTO_TCP = 6;
+const bit<8> PROTO_UDP = 17;
+const bit<8> PROTO_ML = 253;
+const bit<16> ETHERTYPE_IPV4 = 0x0800;
 #define ETH_TYPE_ARP 0x0806
 #define ETH_TYPE_VLAN 0x8100
 #define ETHERTYPE_AES_TOY 0x9999
@@ -75,6 +111,8 @@ header copyright_t {
 typedef bit<9> egressSpec_t;
 struct my_headers_t {
     ethernet_t ethernet;
+    ipv4_t ipv4;
+    tcp_t tcp;
     aes_inout_t aes_inout;
     copyright_t copy;
 
@@ -98,8 +136,11 @@ header aes_meta_t {
 
 
 struct my_metadata_t {
-    bit<1> aes_or_not;
     aes_meta_t aes;
+
+    bit<8> ip_proto;
+    l4_port_t l4_src_port;
+    l4_port_t l4_dst_port;
 
     // From assignment3
     bit<12> vid;
@@ -116,11 +157,36 @@ parser MyParser(packet_in packet,
         packet.extract(hdr.ethernet);
         meta.vid = 0; //From assignment3
         meta.etherType = hdr.ethernet.etherType;
+
         transition select(hdr.ethernet.etherType) {
-            //ETHERTYPE_AES_TOY : parse_aes;
             ETH_TYPE_VLAN: parse_vlan;
-            default: parse_aes;
+	    ETHERTYPE_IPV4: parse_ipv4;
+	    default: accept;
+            //default: parse_aes;
         }
+    }
+
+    state parse_ipv4 {
+       packet.extract(hdr.ipv4);
+       meta.ip_proto = hdr.ipv4.protocol;
+       //transition select(hdr.ipv4.protocol) {
+       //     ETH_TYPE_VLAN: parse_vlan;
+       //     default: parse_aes;
+       //}
+
+       // What prof. suggested
+       // transition parse_tcp;
+       transition select(hdr.ipv4.protocol) {
+       	   PROTO_TCP: parse_tcp;
+       	   default: accept;
+       }
+    }
+
+    state parse_tcp {
+        packet.extract(hdr.tcp);
+        meta.l4_src_port = hdr.tcp.src_port;
+        meta.l4_dst_port = hdr.tcp.dst_port;
+        transition parse_aes;
     }
 
     state parse_vlan {
@@ -332,14 +398,13 @@ GENERATE_ALL_TABLE_LUT(2)
     }
    // ==== End of the actions and table from assignment3 === 
     apply {
-
 	if (hdr.ethernet.etherType == ETH_TYPE_ARP) { // Non-VLAN + ARP packet
 	    flood();
 	}
 	else { // Non-VLAN + Non-ARP packet
-            //if (hdr.aes_inout.isValid() && hdr.aes_inout.ff==0xFF) {
-            if (hdr.aes_inout.isValid() && meta.aes_or_not == 0) {
-	        read_cleartext();
+            // if (hdr.aes_inout.isValid() && hdr.aes_inout.ff==0xFF) {
+            if (hdr.aes_inout.isValid()) {
+	        //read_cleartext();
 	        // Start AES
 	        APPLY_MASK_KEY(0);
 	        // 10-1 Rounds
@@ -400,7 +465,6 @@ control MyEgress(
         default_action = drop;
     }
     apply {   
-	meta.aes_or_not = 1;
 
         // (1) Prune multicast packets going to ingress port to prevent loops
         if (standard_metadata.egress_port == standard_metadata.ingress_port)
