@@ -21,6 +21,7 @@ The key insight of "Implementing AES Encryption on Programmable Switches via Scr
 
 
 https://user-images.githubusercontent.com/54554850/206609500-cfd5bb17-efe5-4ebe-b85b-af96a8ff368b.mp4
+
 (swap out for extended video later?)
 
 ## Our Implementation and Results
