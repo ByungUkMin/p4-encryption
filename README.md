@@ -1,6 +1,6 @@
 
 
-<img src="images/purdue-cs-logo.jpg" alt="drawing" width="450"/>
+<img src="purdue-cs-logo.jpg" alt="drawing" width="450"/>
 
 # Validating and Evaluating the Paper, "Implementing AES
 Encryption on Programmable Switches via Scrambled Lookup
