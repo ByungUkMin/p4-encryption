@@ -24,16 +24,18 @@ def handle_packet(pkt):
           to the server with correct `sequence` and `acknowledgement` numbers.
     """
 
-    print(pkt.show())
-    print("packet length: " , len(pkt))
-    print("IP header length: " , len(pkt[IP]))
-    print("Raw length: " , len(pkt['Raw']))
 
     #print("hex str - ", pkt['Raw'])
     #print " ".join(hex(ord(n)) for n in my_hex
     
     global count_packets
     count_packets = count_packets + 1
+    print(pkt.show())
+    print("-----", count_packets, " th packet -----")
+    print("packet length: " , len(pkt))
+    print("IP header length: " , len(pkt[IP]))
+    print("Raw length: " , len(pkt['Raw']))
+    print("-------------------------")
 
 def _filter(pkt):
     if (IP in pkt) and (Raw in pkt):  # capture only IP and TCP packets

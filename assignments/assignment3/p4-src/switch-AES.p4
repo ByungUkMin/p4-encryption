@@ -23,9 +23,6 @@
 #include <core.p4>
 #include <v1model.p4>
 
-// AES encryption lookup tables, to fill match-action entries at compile time. You may also fill it in at run time.
-
-//#define EMPTY_LUT_FILL_AT_RUNTIME
 #ifndef EMPTY_LUT_FILL_AT_RUNTIME
 	#include "LUT.h"
 #else
@@ -102,10 +99,6 @@ const bit<16> ETHERTYPE_IPV4 = 0x0800;
 // To perform multiple block using modes like CBC/CTR, etc., simply XOR a counter/IV with value before starting AES.
 header aes_inout_t {
     bit<128> value;
-    //bit<8> ff; // should be 0xFF.
-}
-header copyright_t {
-	bit<64> value;
 }
 
 typedef bit<9> egressSpec_t;
@@ -114,7 +107,6 @@ struct my_headers_t {
     ipv4_t ipv4;
     tcp_t tcp;
     aes_inout_t aes_inout;
-    copyright_t copy;
 
     // from assignment3
     vlan_t vlan;
@@ -147,6 +139,21 @@ struct my_metadata_t {
     bit<16> etherType;
     bit<4> _pad;
 }
+//--------------- Start of AES --------------------
+
+//#define EMPTY_LUT_FILL_AT_RUNTIME
+#ifndef EMPTY_LUT_FILL_AT_RUNTIME
+	#include "LUT.h"
+#else
+	#define GEN_LUT0(FN) {}
+	#define GEN_LUT1(FN) {}
+	#define GEN_LUT2(FN) {}
+	#define GEN_LUT3(FN) {}
+	#define GEN_LUT_SBOX(FN) {}
+#endif
+
+
+//--------------- End of AES --------------------
 
 parser MyParser(packet_in packet,
     		out my_headers_t hdr,
@@ -162,20 +169,13 @@ parser MyParser(packet_in packet,
             ETH_TYPE_VLAN: parse_vlan;
 	    ETHERTYPE_IPV4: parse_ipv4;
 	    default: accept;
-            //default: parse_aes;
         }
     }
 
     state parse_ipv4 {
        packet.extract(hdr.ipv4);
        meta.ip_proto = hdr.ipv4.protocol;
-       //transition select(hdr.ipv4.protocol) {
-       //     ETH_TYPE_VLAN: parse_vlan;
-       //     default: parse_aes;
-       //}
 
-       // What prof. suggested
-       // transition parse_tcp;
        transition select(hdr.ipv4.protocol) {
        	   PROTO_TCP: parse_tcp;
        	   default: accept;
@@ -211,49 +211,35 @@ control MyIngress(
     inout my_metadata_t    meta,
     inout standard_metadata_t  standard_metadata)
 {
-    action reflect() {
-        bit<48> tmp;
-        // Reflect the packet back to sender.
-        standard_metadata.egress_spec = standard_metadata.ingress_port;
-        tmp = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = hdr.ethernet.srcAddr;
-        hdr.ethernet.srcAddr = tmp;
-	hdr.copy.setValid();
-	hdr.copy.value=COPYRIGHT_STRING;
+    // ===== Start of AES logic =====
+    
+    action read_cleartext(){
+    	meta.aes.t0=hdr.aes_inout.value[127:96];
+    	meta.aes.t1=hdr.aes_inout.value[95:64];
+    	meta.aes.t2=hdr.aes_inout.value[63:32];
+    	meta.aes.t3=hdr.aes_inout.value[31:0];
     }
-
-    action _drop() {
-        mark_to_drop(standard_metadata);
+    
+    action mask_key(bit<128> key128){
+    	meta.aes.r0= meta.aes.t0^key128[127:96];
+    	meta.aes.r1= meta.aes.t1^key128[95:64];
+    	meta.aes.r2= meta.aes.t2^key128[63:32];
+    	meta.aes.r3= meta.aes.t3^key128[31:0];
     }
-
-	// ===== Start of AES logic =====
-
-	action read_cleartext(){
-		meta.aes.t0=hdr.aes_inout.value[127:96];
-		meta.aes.t1=hdr.aes_inout.value[95:64];
-		meta.aes.t2=hdr.aes_inout.value[63:32];
-		meta.aes.t3=hdr.aes_inout.value[31:0];
-	}
-
-	action mask_key(bit<128> key128){
-		meta.aes.r0= meta.aes.t0^key128[127:96];
-		meta.aes.r1= meta.aes.t1^key128[95:64];
-		meta.aes.r2= meta.aes.t2^key128[63:32];
-		meta.aes.r3= meta.aes.t3^key128[31:0];
-	}
-
-	action write_ciphertext(){
-		hdr.aes_inout.value[127:96]=meta.aes.r0;
-		hdr.aes_inout.value[95:64]=meta.aes.r1;
-		hdr.aes_inout.value[63:32]=meta.aes.r2;
-		hdr.aes_inout.value[31:0]=meta.aes.r3;
-
-	}
+    
+    action write_ciphertext(){
+    	hdr.aes_inout.value[127:96]=meta.aes.r0;
+    	hdr.aes_inout.value[95:64]=meta.aes.r1;
+    	hdr.aes_inout.value[63:32]=meta.aes.r2;
+    	hdr.aes_inout.value[31:0]=meta.aes.r3;
+    
+    }
 
 #define TABLE_MASK_KEY(ROUND,SUBKEY128) table mask_key_round_##ROUND { \
 		actions = {mask_key;} \
 		default_action = mask_key(SUBKEY128); \
 	}
+
 // For demonstration purpose, here we put in all the 10-round subkeys derived from an example key 0x01010101020202020303030304040404
 	TABLE_MASK_KEY( 0,0x01010101020202020303030304040404)
 	TABLE_MASK_KEY( 1,0xf2f3f3f3f0f1f1f1f3f2f2f2f7f6f6f6)
@@ -268,7 +254,6 @@ control MyIngress(
 	//TABLE_MASK_KEY(10,0xf505fb04602816a46a47ee776a29b75)
 
 #define APPLY_MASK_KEY(ROUND) mask_key_round_##ROUND##.apply();
-
 
 	action new_round() {
 		// Could be skipped, if we use better renaming and read key first.
@@ -290,22 +275,22 @@ control MyIngress(
 #define merge_to_partial(T,SLICE,SLICE_BITS)  action merge_to_t##T##_slice##SLICE##(bit<8> val){ \
 	meta.aes.t##T##SLICE_BITS##=meta.aes.t##T##SLICE_BITS##^val;\
 	}
-	merge_to_partial(0,0,[31:24])
-	merge_to_partial(0,1,[23:16])
-	merge_to_partial(0,2,[15: 8])
-	merge_to_partial(0,3,[ 7: 0])
-	merge_to_partial(1,0,[31:24])
-	merge_to_partial(1,1,[23:16])
-	merge_to_partial(1,2,[15: 8])
-	merge_to_partial(1,3,[ 7: 0])
-	merge_to_partial(2,0,[31:24])
-	merge_to_partial(2,1,[23:16])
-	merge_to_partial(2,2,[15: 8])
-	merge_to_partial(2,3,[ 7: 0])
-	merge_to_partial(3,0,[31:24])
-	merge_to_partial(3,1,[23:16])
-	merge_to_partial(3,2,[15: 8])
-	merge_to_partial(3,3,[ 7: 0])
+	//merge_to_partial(0,0,[31:24])
+	//merge_to_partial(0,1,[23:16])
+	//merge_to_partial(0,2,[15: 8])
+	//merge_to_partial(0,3,[ 7: 0])
+	//merge_to_partial(1,0,[31:24])
+	//merge_to_partial(1,1,[23:16])
+	//merge_to_partial(1,2,[15: 8])
+	//merge_to_partial(1,3,[ 7: 0])
+	//merge_to_partial(2,0,[31:24])
+	//merge_to_partial(2,1,[23:16])
+	//merge_to_partial(2,2,[15: 8])
+	//merge_to_partial(2,3,[ 7: 0])
+	//merge_to_partial(3,0,[31:24])
+	//merge_to_partial(3,1,[23:16])
+	//merge_to_partial(3,2,[15: 8])
+	//merge_to_partial(3,3,[ 7: 0])
 
 // Macros for defining lookup tables, which is match-action table that XOR the value into accumulator variable
 #define TABLE_LUT(NAME,READ,WHICH_LUT,WRITE) table NAME { \
@@ -369,25 +354,25 @@ GENERATE_ALL_TABLE_LUT(2)
 
 #define AP(ROUND,i)  aes_sbox_lut_##i##_r##ROUND##.apply();
 #define APPLY_ALL_TABLE_LUT(ROUND) AP(ROUND,00) AP(ROUND,01) AP(ROUND,02) AP(ROUND,03) AP(ROUND,10) AP(ROUND,11) AP(ROUND,12) AP(ROUND,13) AP(ROUND,20) AP(ROUND,21) AP(ROUND,22) AP(ROUND,23) AP(ROUND,30) AP(ROUND,31) AP(ROUND,32) AP(ROUND,33)
+    
+    // ===== End of AES logic =====
 
-	// ==== End of AES LUTs, start of contorl logic ====
+    action _drop() {
+        mark_to_drop(standard_metadata);
+    }
 
-   // ==== Start of the actions and table from assignment3 === 
     action forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
-
-	//From AES side
-	hdr.copy.setValid();
-	hdr.copy.value=COPYRIGHT_STRING;
     }
+
     action flood() {
         standard_metadata.mcast_grp = MCAST_ID;
     }
+
     table switch_table {
         key = {
             hdr.ethernet.dstAddr: exact;
 	    meta.vid: exact;
-	    //hdr.vlan.vid: exact;
         }
         actions = {
             flood;
@@ -396,39 +381,28 @@ GENERATE_ALL_TABLE_LUT(2)
         size = 1024;
         default_action = flood;
     }
-   // ==== End of the actions and table from assignment3 === 
+
     apply {
-	if (hdr.ethernet.etherType == ETH_TYPE_ARP) { // Non-VLAN + ARP packet
+	if (hdr.ethernet.etherType == ETH_TYPE_VLAN) { // VLAN-enabled
+	    if (meta.etherType == ETH_TYPE_ARP) { // VLAN-enabled + ARP packet
+	        flood();
+	    }
+	    else { // VLAN-enabled + Non-ARP packet
+	        switch_table.apply();
+	    }
+	}
+	else if (hdr.ethernet.etherType == ETH_TYPE_ARP) { // Non-VLAN + ARP packet
 	    flood();
 	}
 	else { // Non-VLAN + Non-ARP packet
-            // if (hdr.aes_inout.isValid() && hdr.aes_inout.ff==0xFF) {
             if (hdr.aes_inout.isValid()) {
-	        //read_cleartext();
-	        // Start AES
+	        read_cleartext();
 	        APPLY_MASK_KEY(0);
-	        // 10-1 Rounds
 	        new_round(); APPLY_ALL_TABLE_LUT(1); APPLY_MASK_KEY(1);
 	        new_round(); APPLY_ALL_TABLE_LUT(2); APPLY_MASK_KEY(2);
-	        //new_round(); APPLY_ALL_TABLE_LUT(3); APPLY_MASK_KEY(3);
-	        //new_round(); APPLY_ALL_TABLE_LUT(4); APPLY_MASK_KEY(4);
-	        //new_round(); APPLY_ALL_TABLE_LUT(5); APPLY_MASK_KEY(5);
-	        //new_round(); APPLY_ALL_TABLE_LUT(6); APPLY_MASK_KEY(6);
-	        //new_round(); APPLY_ALL_TABLE_LUT(7); APPLY_MASK_KEY(7);
-	        //new_round(); APPLY_ALL_TABLE_LUT(8); APPLY_MASK_KEY(8);
-	        //new_round(); APPLY_ALL_TABLE_LUT(9); APPLY_MASK_KEY(9);
-	        // one last round, S-box only
-	        //new_round(); APPLY_ALL_TABLE_LUT(LAST); APPLY_MASK_KEY(10);
-	        // End AES
-
 	        write_ciphertext();
-	        // Send the packet back to the sender (for debug only).
-
-	        //reflect();
+		//flood();
             } 
-	    //else {
-            //    _drop();
-            //}
 	    switch_table.apply();
 	}
     }
@@ -464,6 +438,7 @@ control MyEgress(
         size = 1024;
         default_action = drop;
     }
+
     apply {   
 
         // (1) Prune multicast packets going to ingress port to prevent loops
@@ -494,10 +469,11 @@ control MyDeparser(
     in my_headers_t hdr)
 {
     apply {
-        packet.emit(hdr.packet_in);
         packet.emit(hdr.ethernet);
+	
+	packet.emit(hdr.ipv4);
+	packet.emit(hdr.tcp);
         packet.emit(hdr.aes_inout);
-        packet.emit(hdr.copy);
     }
 }
 

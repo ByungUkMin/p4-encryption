@@ -94,42 +94,18 @@ def ProcPacketIn(switch_name, logs_dir, num_logs_threshold):
                 src_mac = mac2str(src_mac_in_bytes)
                 eth_type_in_bytes = payload[12:14]
                 eth_type = int.from_bytes(eth_type_in_bytes, "big")
-                print("eth_type = ", eth_type)
-
-                if eth_type == ETH_TYPE_VLAN:
-                    payload_in_bytes = payload[20:20 + 16] # 16byte(128 bit) payload
-                else:
-                    payload_in_bytes = payload[14:14 + 16] # 16byte(128 bit) payload
-                print("payload: (string) ", str(payload_in_bytes))
-                print("payload length ", len(payload_in_bytes))
 
                 if eth_type == ETH_TYPE_VLAN:
                     # Parse VLAN header
-                    #vlan_id_in_bytes = payload[14:16]
-                    #vlan_id = int.from_bytes(vlan_id_in_bytes, "big")
                     vlan_id = int(int.from_bytes(payload[14:16], "big") & 0x0FFF)
 
-                    print("PacketIn: dst={0} src={1} vlan={2} port={3}".format(dst_mac, src_mac, vlan_id, ingress_port))
+                    print("PacketIn: dst={0} src={1} vlan={2} port={3} eth_type = {3}".format(dst_mac, src_mac, vlan_id, ingress_port, eth_type))
                 else:
-                    print("PacketIn: dst={0} src={1} port={2}".format(dst_mac, src_mac, ingress_port))
+                    print("PacketIn: dst={0} src={1} port={2} eth_type = {3}".format(dst_mac, src_mac, ingress_port, eth_type))
 
                 try:
                     with contextlib.redirect_stdout(None):  # A hack to suppress print statements 
                         # within the table_entry.match get/set objects
-
-                        ##################################################################################
-                        # Learning Switch Logic - Begins #################################################
-                        ##################################################################################
-
-                        # TODO: For each incoming ARP packet, learn the mapping between the tuple (source 
-                        # Ethernet address, VLAN ID) to ingress port. For non-VLAN packets, set the VLAN 
-                        # ID to 0. 
-                        # Install flow entries in switch table (you specified in the P4 program):
-                        #   - Match fields: Ethernet address, VLAN ID
-                        #   - Action: `SwitchTableIngress.forward`` | parameter: `port``
-                        #
-                        # NOTE: please follow p4rt-src/bridge.py for a reference example on how to install
-                        # table entries.
 
                         if eth_type == ETH_TYPE_VLAN:
                             isARPCheck_in_bytes = payload[16:18]
@@ -143,34 +119,14 @@ def ProcPacketIn(switch_name, logs_dir, num_logs_threshold):
 
                         else:  # Non-VLAN + ARP packet
                         #elif eth_type == ETH_TYPE_ARP:  # Non-VLAN + ARP packet
-                            data_payload = int.from_bytes(payload_in_bytes, "big") 
-                            table_entry = p4sh.TableEntry('MyIngress.switch_table')(action='MyIngress.read_cleartext')
-                            table_entry.match['hdr.aes_inout.value'] = str(data_payload)
-                            table_entry.insert()
-
                             table_entry = p4sh.TableEntry('MyIngress.switch_table')(action='MyIngress.forward')
                             table_entry.match['hdr.ethernet.dstAddr'] = src_mac
                             table_entry.match['meta.vid'] = str(0)
                             table_entry.action['port'] = str(ingress_port)
                             table_entry.insert()
-                            
-
-                        ##################################################################################
-                        # Learning Switch Logic - Ends ###################################################
-                        ##################################################################################
-
                 except:
                     pass
 
-            # Log the Ethernet address to port mapping
-            num_logs += 1
-            if num_logs == num_logs_threshold:
-                num_logs = 0
-                with open('{0}/{1}-table.json'.format(logs_dir, switch_name), 'w') as outfile:
-                    with contextlib.redirect_stdout(outfile):
-                        p4sh.TableEntry('MyIngress.switch_table').read(lambda te: print(te))
-                print(
-                    "INFO: Log committed to {0}/{1}-table.json".format(logs_dir, switch_name))
     except KeyboardInterrupt:
         return None
 
@@ -227,14 +183,6 @@ if __name__ == '__main__':
         # Install VLAN Rules - Begins ####################################################
         ##################################################################################
 
-        # TODO: Install flow entries to let packets traverse only those egress ports that 
-        # match its VLAN ID.
-        # Install flow entries in the VLAN table (as specified in the P4 program):
-        #   - Match fields: `standard_metadata.egress_port`, VLAN ID
-        #   - Action: `MyEgress.noop`
-        #
-        # NOTE: please follow p4rt-src/bridge.py for a reference example on how to install
-        # table entries.
         if vlan_id_to_ports_map:
             for vlan_id in vlan_id_to_ports_map:
                 for port in vlan_id_to_ports_map[vlan_id]:
@@ -252,26 +200,6 @@ if __name__ == '__main__':
         ##################################################################################
         # Install VLAN Rules - Ends ######################################################
         ##################################################################################
-
-    with open('{0}/{1}-vlan-table.json'.format(LOGS_DIR, switch_name), 'w') as outfile:
-        with contextlib.redirect_stdout(outfile):
-            p4sh.TableEntry('MyEgress.vlan_table').read(lambda te: print(te))
-        print("INFO: Log committed to {0}/{1}-vlan-table.json".format(LOGS_DIR, switch_name))
-
-        ##################################################################################
-        # Encryption starts  ######################################################
-        ##################################################################################
-    #if args.enc_key == None:
-    #    sys.stderr.write("Install AES-128 key into Scrambled Lookup Tables in the P4 data plane program.")
-    #    sys.stderr.write("Example: python switch-AES.py --topo-config=topo/$(topo).json --grpc-port=50001 --enc-key 0x10002000300040005000600070008000 \n")
-    #    sys.exit(-1)
-
-    #add_encryption(args.enc_key)
-
-        ##################################################################################
-        # Encryption ends  ######################################################
-        ##################################################################################
-    # Start the packet-processing loop
     ProcPacketIn(switch_name, LOGS_DIR, NUM_LOGS_THRESHOLD)
 
     print("Switch Stopped")
@@ -281,33 +209,12 @@ if __name__ == '__main__':
 
     # Delete VLAN rules
     with contextlib.redirect_stdout(None):  # A hack to suppress print statements 
-        # within the table_entry.match get/set objects
-
-        ##################################################################################
-        # Delete VLAN Rules - Begins #####################################################
-        ##################################################################################
-
-        # TODO: Delete VLAN flow entries.
-        # Delete flow entries from the VLAN table (as specified in the P4 program):
-        #   - Match fields: `standard_metadata.egress_port`, VLAN ID
-        #   - Action: `MyEgress.noop`
-        #
-        # NOTE: please follow p4rt-src/bridge.py for a reference example on how to install
-        # table entries.
-
         for vlan_id in vlan_id_to_ports_map:
             table_entry = p4sh.TableEntry('MyEgress.vlan_table')(action='MyEgress.noop')
             for port in vlan_id_to_ports_map[vlan_id]:
                 table_entry.match['standard_metadata.egress_port'] = str(port)
                 table_entry.match['meta.vid'] = str(vlan_id)
                 table_entry.delete()
-
-        ##################################################################################
-        # Delete VLAN Rules - Ends #######################################################
-        ##################################################################################
-
-
-
 
     # Close the P4Runtime connection
     p4sh.teardown()
