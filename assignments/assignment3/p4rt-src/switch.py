@@ -117,8 +117,8 @@ def ProcPacketIn(switch_name, logs_dir, num_logs_threshold):
                                 table_entry.action['port'] = str(ingress_port)
                                 table_entry.insert()
 
-                        else:  # Non-VLAN + ARP packet
-                        #elif eth_type == ETH_TYPE_ARP:  # Non-VLAN + ARP packet
+                        #else:  # Non-VLAN + ARP packet
+                        elif eth_type == ETH_TYPE_ARP:  # Non-VLAN + ARP packet
                             table_entry = p4sh.TableEntry('MyIngress.switch_table')(action='MyIngress.forward')
                             table_entry.match['hdr.ethernet.dstAddr'] = src_mac
                             table_entry.match['meta.vid'] = str(0)

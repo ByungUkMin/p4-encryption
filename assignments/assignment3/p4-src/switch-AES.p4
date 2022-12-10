@@ -23,6 +23,7 @@
 #include <core.p4>
 #include <v1model.p4>
 
+//#define EMPTY_LUT_FILL_AT_RUNTIME
 #ifndef EMPTY_LUT_FILL_AT_RUNTIME
 	#include "LUT.h"
 #else
@@ -83,6 +84,7 @@ header vlan_t {
     bit<16> etherType;
 }
 
+typedef bit<9> egressSpec_t;
 typedef bit<16>  l4_port_t;
 const bit<8> PROTO_ICMP = 1;
 const bit<8> PROTO_TCP = 6;
@@ -101,7 +103,6 @@ header aes_inout_t {
     bit<128> value;
 }
 
-typedef bit<9> egressSpec_t;
 struct my_headers_t {
     ethernet_t ethernet;
     ipv4_t ipv4;
@@ -427,7 +428,6 @@ control MyEgress(
     }
     table vlan_table {
         key = {
-	    //hdr.vlan.vid: exact;
 	    meta.vid: exact;
             standard_metadata.egress_port: exact;
         }
@@ -440,11 +440,9 @@ control MyEgress(
     }
 
     apply {   
-
         // (1) Prune multicast packets going to ingress port to prevent loops
         if (standard_metadata.egress_port == standard_metadata.ingress_port)
             drop();
-
 
         // (2) Send a copy of the packet to the controller for learning
         if (standard_metadata.egress_port == CPU_PORT)
@@ -469,11 +467,12 @@ control MyDeparser(
     in my_headers_t hdr)
 {
     apply {
+        packet.emit(hdr.packet_in);
         packet.emit(hdr.ethernet);
-	
 	packet.emit(hdr.ipv4);
 	packet.emit(hdr.tcp);
         packet.emit(hdr.aes_inout);
+        packet.emit(hdr.vlan);
     }
 }
 
