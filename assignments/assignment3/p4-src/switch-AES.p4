@@ -84,6 +84,7 @@ header vlan_t {
     bit<16> etherType;
 }
 
+typedef bit<2> aes_or_not_t;
 typedef bit<9> egressSpec_t;
 typedef bit<16>  l4_port_t;
 const bit<8> PROTO_ICMP = 1;
@@ -108,6 +109,7 @@ struct my_headers_t {
     ipv4_t ipv4;
     tcp_t tcp;
     aes_inout_t aes_inout;
+    
 
     // from assignment3
     vlan_t vlan;
@@ -130,6 +132,7 @@ header aes_meta_t {
 
 struct my_metadata_t {
     aes_meta_t aes;
+    aes_or_not_t aes_or_not;
 
     bit<8> ip_proto;
     l4_port_t l4_src_port;
@@ -363,6 +366,7 @@ GENERATE_ALL_TABLE_LUT(2)
     }
 
     action forward(egressSpec_t port) {
+	meta.aes_or_not = 1;
         standard_metadata.egress_spec = port;
     }
 
@@ -396,7 +400,7 @@ GENERATE_ALL_TABLE_LUT(2)
 	    flood();
 	}
 	else { // Non-VLAN + Non-ARP packet
-            if (hdr.aes_inout.isValid()) {
+            if (hdr.aes_inout.isValid() && meta.aes_or_not != 1) {
 	        read_cleartext();
 	        APPLY_MASK_KEY(0);
 	        new_round(); APPLY_ALL_TABLE_LUT(1); APPLY_MASK_KEY(1);

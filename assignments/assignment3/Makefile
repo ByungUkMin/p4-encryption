@@ -31,7 +31,7 @@ endif
 
 SCRIPTS = ../scripts
 SRCS_DIR=.
-SPC_SEND = $(SRCS_DIR)/client.py
+SPC_SEND = $(SRCS_DIR)/sender.py
 SPC_RECEIVE = $(SRCS_DIR)/receiver.py
 
 export MN_STRATUM_IMG = opennetworking/mn-stratum

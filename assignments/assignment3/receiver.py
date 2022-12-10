@@ -3,39 +3,20 @@
 from scapy.all import *
 import threading
 import socket  
-
-SEND_PACKET_SIZE = 1000  # should be less than max packet size of 1500 bytes
+import time
 
 count_packets = 0
 
-# A client class for implementing TCP's three-way-handshake connection establishment and closing protocol,
-# along with data transmission.
-
-# Name: Franklin Liu
-# PUID: liu2194
-#
-            
 def handle_packet(pkt):
-    """TODO(1): Handle incoming packets from the server and acknowledge them accordingly. Here are some pointers on
-       what you need to do:
-       1. If the incoming packet has data (or payload), send an acknowledgement (TCP) packet with correct 
-          `sequence` and `acknowledgement` numbers.
-       2. If the incoming packet is a FIN (or FINACK) packet, send an appropriate acknowledgement or FINACK packet
-          to the server with correct `sequence` and `acknowledgement` numbers.
-    """
 
-
-    #print("hex str - ", pkt['Raw'])
-    #print " ".join(hex(ord(n)) for n in my_hex
-    
     global count_packets
     count_packets = count_packets + 1
-    print(pkt.show())
-    print("-----", count_packets, " th packet -----")
-    print("packet length: " , len(pkt))
-    print("IP header length: " , len(pkt[IP]))
-    print("Raw length: " , len(pkt['Raw']))
-    print("-------------------------")
+    #print(pkt.show())
+    #print("-----  " + str(count_packets) + " th packet  -----")
+    #print("packet length: {0}".format(len(pkt)))
+    #print("IP header length: {0}".format(len(pkt[IP])))
+    print("{0} th received packet(Raw): {1} (length={2}) ".format(count_packets, pkt['Raw'], len(pkt['Raw'])))
+
 
 def _filter(pkt):
     if (IP in pkt) and (Raw in pkt):  # capture only IP and TCP packets
@@ -43,12 +24,26 @@ def _filter(pkt):
     return False
         
 def main():
-    """Parse command-line arguments and call client function """
     connected = True
+    TEST = 100000
+    CHUNK = 1000
+    executionTime = 0
+
     while connected:
-        capture=sniff(prn=lambda x: handle_packet(x),lfilter=lambda x: _filter(x),count=1)
-        if count_packets >=10:
-            connected = False
+        try:
+            start_time = time.time()
+            capture=sniff(prn=lambda x: handle_packet(x),lfilter=lambda x: _filter(x),count=CHUNK)
+            end_time = time.time()
+
+            intermediate_time = end_time - start_time
+            executionTime = executionTime + intermediate_time
+
+            if count_packets >=TEST:
+                connected = False
+        except KeyboardInterrupt:
+            return None
+
+    print("Receiver: Execution Time = {0}".format(executionTime))
 
 
 if __name__ == "__main__":
