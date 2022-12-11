@@ -72,7 +72,12 @@
     make sender-script name=h1s1 dst_ip=10.0.0.4 port=1111
     ```
 
-  <img src="others/images/bridge-ping-h1s1-h2s1.png" alt="Ping between h1s1 and h2s1 using learning bridges" width="1000"><br>
+- **Check the results of encrypted packets transmission**.
+  - If the receiver receives the packets encrypted in the encrpyted enabled switches ("switch-AES"), the result looks as follows
+  <img src="others/images/receiver_encrypted.png" alt="Receiver with encryption" width="1000"><br>
+
+  - If the receiver receives the packets via ordinary switches without encryption support ("switch-woAES"), the result looks as follows
+  <img src="others/images/receiver_without_encrypted.png" alt="Receiver without encryption" width="1000"><br>
 
 ## Acknowledgement
 
