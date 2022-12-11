@@ -74,10 +74,10 @@
 
 - **Check the results of encrypted packets transmission**.
   - If the receiver receives the packets encrypted in the encrpyted enabled switches ("switch-AES"), the result looks as follows
-  <img src="others/images/receiver_encrypted.png" alt="Receiver with encryption" width="1000"><br>
+  <img src="others/images/receiver_encrypted.png" alt="Receiver with encryption" width="500"><br>
 
   - If the receiver receives the packets via ordinary switches without encryption support ("switch-woAES"), the result looks as follows
-  <img src="others/images/receiver_without_encrypted.png" alt="Receiver without encryption" width="1000"><br>
+  <img src="others/images/receiver_without_encrypted.png" alt="Receiver without encryption" width="500"><br>
 
 ## Acknowledgement
 
