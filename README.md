@@ -27,6 +27,8 @@ https://user-images.githubusercontent.com/54554850/206609500-cfd5bb17-efe5-4ebe-
 
 Our implementation was run on an AWS EC2 instance with 2vCPU and 8 gb of of memory, and utilizes a 2 switch, 6 host Mininet topology heavily drawing upon the assignment 3 code repository with custom Scapy scripts for packet generation and for collecting metrics such as packect rate to measure encryption overhead.
 
+Our results as well as scripts used to generate figures are included in `assignments/assignment3/result`. The raw data is included in `overheadresult.dat`, and you can run `gnuplot AES_PLOT.p` to generate the figure ([gnuplot](http://www.gnuplot.info/) is required to do this action). 
+
 (insert results here)
 
 ## p4-projects
