@@ -29,7 +29,7 @@ else
 	PYTHON = python2
 endif
 
-SCRIPTS = ../scripts
+SCRIPTS = ./scripts
 SRCS_DIR=.
 SPC_SEND = $(SRCS_DIR)/sender.py
 SPC_RECEIVE = $(SRCS_DIR)/receiver.py
