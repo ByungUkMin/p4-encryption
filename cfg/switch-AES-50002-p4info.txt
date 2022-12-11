@@ -1,0 +1,972 @@
+pkg_info {
+  arch: "v1model"
+}
+tables {
+  preamble {
+    id: 33557870
+    name: "MyIngress.mask_key_round_0"
+    alias: "mask_key_round_0"
+  }
+  action_refs {
+    id: 16794449
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 33562802
+    name: "MyIngress.mask_key_round_1"
+    alias: "mask_key_round_1"
+  }
+  action_refs {
+    id: 16794449
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 33572057
+    name: "MyIngress.mask_key_round_2"
+    alias: "mask_key_round_2"
+  }
+  action_refs {
+    id: 16794449
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 33588638
+    name: "MyIngress.aes_sbox_lut_00_r1"
+    alias: "aes_sbox_lut_00_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r0[31:24]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16797780
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33574503
+    name: "MyIngress.aes_sbox_lut_01_r1"
+    alias: "aes_sbox_lut_01_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r1[23:16]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16797780
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33570522
+    name: "MyIngress.aes_sbox_lut_02_r1"
+    alias: "aes_sbox_lut_02_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r2[15:8]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16797780
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33612685
+    name: "MyIngress.aes_sbox_lut_03_r1"
+    alias: "aes_sbox_lut_03_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r3[7:0]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16797780
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33604733
+    name: "MyIngress.aes_sbox_lut_10_r1"
+    alias: "aes_sbox_lut_10_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r1[31:24]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16790503
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33617235
+    name: "MyIngress.aes_sbox_lut_11_r1"
+    alias: "aes_sbox_lut_11_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r2[23:16]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16790503
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33604678
+    name: "MyIngress.aes_sbox_lut_12_r1"
+    alias: "aes_sbox_lut_12_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r3[15:8]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16790503
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33554796
+    name: "MyIngress.aes_sbox_lut_13_r1"
+    alias: "aes_sbox_lut_13_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r0[7:0]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16790503
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33607564
+    name: "MyIngress.aes_sbox_lut_20_r1"
+    alias: "aes_sbox_lut_20_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r2[31:24]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16816555
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33578021
+    name: "MyIngress.aes_sbox_lut_21_r1"
+    alias: "aes_sbox_lut_21_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r3[23:16]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16816555
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33596211
+    name: "MyIngress.aes_sbox_lut_22_r1"
+    alias: "aes_sbox_lut_22_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r0[15:8]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16816555
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33613943
+    name: "MyIngress.aes_sbox_lut_23_r1"
+    alias: "aes_sbox_lut_23_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r1[7:0]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16816555
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33592340
+    name: "MyIngress.aes_sbox_lut_30_r1"
+    alias: "aes_sbox_lut_30_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r3[31:24]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16809228
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33612948
+    name: "MyIngress.aes_sbox_lut_31_r1"
+    alias: "aes_sbox_lut_31_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r0[23:16]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16809228
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33619673
+    name: "MyIngress.aes_sbox_lut_32_r1"
+    alias: "aes_sbox_lut_32_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r1[15:8]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16809228
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33610461
+    name: "MyIngress.aes_sbox_lut_33_r1"
+    alias: "aes_sbox_lut_33_r1"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r2[7:0]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16809228
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33597698
+    name: "MyIngress.aes_sbox_lut_00_r2"
+    alias: "aes_sbox_lut_00_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r0[31:24]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16797780
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33614844
+    name: "MyIngress.aes_sbox_lut_01_r2"
+    alias: "aes_sbox_lut_01_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r1[23:16]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16797780
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33592438
+    name: "MyIngress.aes_sbox_lut_02_r2"
+    alias: "aes_sbox_lut_02_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r2[15:8]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16797780
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33590507
+    name: "MyIngress.aes_sbox_lut_03_r2"
+    alias: "aes_sbox_lut_03_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r3[7:0]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16797780
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33579552
+    name: "MyIngress.aes_sbox_lut_10_r2"
+    alias: "aes_sbox_lut_10_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r1[31:24]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16790503
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33560324
+    name: "MyIngress.aes_sbox_lut_11_r2"
+    alias: "aes_sbox_lut_11_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r2[23:16]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16790503
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33564657
+    name: "MyIngress.aes_sbox_lut_12_r2"
+    alias: "aes_sbox_lut_12_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r3[15:8]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16790503
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33615642
+    name: "MyIngress.aes_sbox_lut_13_r2"
+    alias: "aes_sbox_lut_13_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r0[7:0]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16790503
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33582083
+    name: "MyIngress.aes_sbox_lut_20_r2"
+    alias: "aes_sbox_lut_20_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r2[31:24]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16816555
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33573022
+    name: "MyIngress.aes_sbox_lut_21_r2"
+    alias: "aes_sbox_lut_21_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r3[23:16]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16816555
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33600298
+    name: "MyIngress.aes_sbox_lut_22_r2"
+    alias: "aes_sbox_lut_22_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r0[15:8]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16816555
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33573882
+    name: "MyIngress.aes_sbox_lut_23_r2"
+    alias: "aes_sbox_lut_23_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r1[7:0]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16816555
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33607480
+    name: "MyIngress.aes_sbox_lut_30_r2"
+    alias: "aes_sbox_lut_30_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r3[31:24]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16809228
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33614988
+    name: "MyIngress.aes_sbox_lut_31_r2"
+    alias: "aes_sbox_lut_31_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r0[23:16]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16809228
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33577380
+    name: "MyIngress.aes_sbox_lut_32_r2"
+    alias: "aes_sbox_lut_32_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r1[15:8]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16809228
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33573110
+    name: "MyIngress.aes_sbox_lut_33_r2"
+    alias: "aes_sbox_lut_33_r2"
+  }
+  match_fields {
+    id: 1
+    name: "meta.aes.r2[7:0]"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16809228
+  }
+  action_refs {
+    id: 16800567
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33555186
+    name: "MyIngress.switch_table"
+    alias: "switch_table"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ethernet.dstAddr"
+    bitwidth: 48
+    match_type: EXACT
+  }
+  match_fields {
+    id: 2
+    name: "meta.vid"
+    bitwidth: 12
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16820798
+  }
+  action_refs {
+    id: 16838673
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 33599707
+    name: "MyEgress.vlan_table"
+    alias: "vlan_table"
+  }
+  match_fields {
+    id: 1
+    name: "meta.vid"
+    bitwidth: 12
+    match_type: EXACT
+  }
+  match_fields {
+    id: 2
+    name: "standard_metadata.egress_port"
+    bitwidth: 9
+    match_type: EXACT
+  }
+  action_refs {
+    id: 16788388
+  }
+  action_refs {
+    id: 16816924
+  }
+  size: 1024
+}
+actions {
+  preamble {
+    id: 16800567
+    name: "NoAction"
+    alias: "NoAction"
+  }
+}
+actions {
+  preamble {
+    id: 16794673
+    name: "MyIngress.read_cleartext"
+    alias: "read_cleartext"
+  }
+}
+actions {
+  preamble {
+    id: 16794449
+    name: "MyIngress.mask_key"
+    alias: "mask_key"
+  }
+  params {
+    id: 1
+    name: "key128"
+    bitwidth: 128
+  }
+}
+actions {
+  preamble {
+    id: 16828013
+    name: "MyIngress.write_ciphertext"
+    alias: "write_ciphertext"
+  }
+}
+actions {
+  preamble {
+    id: 16784154
+    name: "MyIngress.new_round"
+    alias: "new_round"
+  }
+}
+actions {
+  preamble {
+    id: 16797780
+    name: "MyIngress.merge_to_t0"
+    alias: "merge_to_t0"
+  }
+  params {
+    id: 1
+    name: "val"
+    bitwidth: 32
+  }
+}
+actions {
+  preamble {
+    id: 16790503
+    name: "MyIngress.merge_to_t1"
+    alias: "merge_to_t1"
+  }
+  params {
+    id: 1
+    name: "val"
+    bitwidth: 32
+  }
+}
+actions {
+  preamble {
+    id: 16816555
+    name: "MyIngress.merge_to_t2"
+    alias: "merge_to_t2"
+  }
+  params {
+    id: 1
+    name: "val"
+    bitwidth: 32
+  }
+}
+actions {
+  preamble {
+    id: 16809228
+    name: "MyIngress.merge_to_t3"
+    alias: "merge_to_t3"
+  }
+  params {
+    id: 1
+    name: "val"
+    bitwidth: 32
+  }
+}
+actions {
+  preamble {
+    id: 16838673
+    name: "MyIngress.forward"
+    alias: "forward"
+  }
+  params {
+    id: 1
+    name: "port"
+    bitwidth: 9
+  }
+}
+actions {
+  preamble {
+    id: 16820798
+    name: "MyIngress.flood"
+    alias: "flood"
+  }
+}
+actions {
+  preamble {
+    id: 16788388
+    name: "MyEgress.noop"
+    alias: "noop"
+  }
+}
+actions {
+  preamble {
+    id: 16816924
+    name: "MyEgress.drop"
+    alias: "drop"
+  }
+}
+actions {
+  preamble {
+    id: 16821424
+    name: "MyEgress.to_controller"
+    alias: "to_controller"
+  }
+}
+controller_packet_metadata {
+  preamble {
+    id: 67146229
+    name: "packet_in"
+    alias: "packet_in"
+    annotations: "@controller_header(\"packet_in\")"
+  }
+  metadata {
+    id: 1
+    name: "ingress_port"
+    bitwidth: 9
+  }
+  metadata {
+    id: 2
+    name: "_pad"
+    bitwidth: 7
+  }
+}
+type_info {
+}
